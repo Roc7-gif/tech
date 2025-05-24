@@ -1,0 +1,4 @@
+SECRET_KEY=django-insecure-ieu@$+_1g$2goh_7t=bkm!j!41or4bqq-cm%x)d#$er3-hyn^9
+DEBUG=False
+ALLOWED_HOSTS=tech.onrender.com
+DATABASE_URL=postgres://utilisateur:motdepasse@hote:port/nom_base
