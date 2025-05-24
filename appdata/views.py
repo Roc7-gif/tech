@@ -149,7 +149,7 @@ def create_categ(request) :
         form  = Project_Categform(request.POST)
         if form.is_valid(): 
             form.save()
-            redirect('create_categ')
+            return  redirect('admin_dashbord')
     return render(request, 'categ_create.html',{'form': form})
 
 def contact(request): 

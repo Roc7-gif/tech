@@ -2,6 +2,10 @@ from django import forms
 from .models import *
 from datetime import date
 import os
+from django import forms
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.contrib.auth.password_validation import validate_password
 
 class ParticipationForm(forms.ModelForm):
     class Meta:
@@ -12,11 +16,6 @@ class ParticipationForm(forms.ModelForm):
         }
 
 
-from django import forms
-from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
-from django.contrib.auth.password_validation import validate_password
-
 class Userform(forms.ModelForm):
     password1 = forms.CharField(
         label="Password",
@@ -26,7 +25,7 @@ class Userform(forms.ModelForm):
         label="Password confirmation",
         widget=forms.PasswordInput(attrs={'class': 'form-control', 'type': 'password'}),
     )
-
+    
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'username', 'email', 'password1', 'password2']
@@ -57,17 +56,6 @@ class Userform(forms.ModelForm):
         self.fields['password1'].required = True
         self.fields['password2'].required = True
 
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-        if User.objects.filter(email=email).exists():
-            raise ValidationError("Cette adresse email est déjà utilisée.")
-        return email
-
-    def clean_username(self):
-        username = self.cleaned_data.get('username')
-        if User.objects.filter(username=username).exists():
-            raise ValidationError("Ce nom d'utilisateur est déjà pris.")
-        return username
     def save(self, commit=True):
         user = super().save(commit=False)
         user.set_password(self.cleaned_data["password1"])
@@ -93,6 +81,11 @@ class Userform(forms.ModelForm):
                     if i.email==email:
                         message= "Email attribué à un autre compte" 
                         self.add_error ('email',message)
+                if User.objects.filter(email=email).exists():
+                     self.add_error('email',"Cette adresse email est déjà utilisée.")
+                if User.objects.filter(username=username).exists():
+                     self.add_error('username',"Ce nom d'utilisateur est déjà utilisée.")
+                
                 return cleaned_data
                 
 
