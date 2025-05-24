@@ -42,7 +42,7 @@ AUTH_PASSWORD_VALIDATORS = [
 import os
 import dj_database_url
 
-DEBUG = False
+DEBUG = True
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-ieu@$+_1g$2goh_7t=bkm!j!41or4bqq-cm%x)d#$er3-hyn^9')
 
