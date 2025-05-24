@@ -1,0 +1,127 @@
+{% extends 'base.html'%}
+
+{% block content%}
+
+
+<!-- Hero Section -->
+<section class="hero" id="home">
+    <div id="particles-js"></div>
+    <video class="hero-video" autoplay muted loop>
+        <source src="https://assets.mixkit.co/videos/preview/mixkit-smart-home-devices-17739-large.mp4" type="video/mp4">
+    </video>
+    <div class="hero-content">
+        <img src="/media/logo1.png" draggable="false"  width="50%" height="50%" alt="">
+        <h1>TechData redéfinit votre quotidien</h1>
+        <p> Des solutions sur mesure où innovation rime avec simplicité.</p>
+        <a href="#services" style="text-decoration: none;" class="hero-button">Découvrir nos Services</a>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section class="services" id="services">
+<h2 class="section-title">Nos Services TechData</h2>
+<div class="services-grid">
+    <!-- Carte Informatique -->
+    <div class="service-card">
+        <div class="service-icon">
+            <i class="fas fa-laptop-code"></i>
+        </div>
+        <h3>💻 Informatique Générale</h3>
+        <ul class="service-list">
+            <li>Vente & réparation d'équipements</li>
+            <li>Réseaux filaires et WiFi sécurisés</li>
+            <li>Sauvegarde de données cloud</li>
+            <li>Assistance technique 24/7</li>
+        </ul>
+        <div class="tech-hover">PC • Serveurs • Firewall • NAS</div>
+    </div>
+
+    <!-- Carte Électricité -->
+    <div class="service-card">
+        <div class="service-icon">
+            <i class="fas fa-bolt"></i>
+        </div>
+        <h3>⚡ Électricité & Data</h3>
+        <ul class="service-list">
+            <li>Installations électriques certifiées</li>
+            <li>Automatisation maison intelligente</li>
+            <li>Panneaux solaires photovoltaïques</li>
+            <li>Contrôle caméras/portails</li>
+        </ul>
+        <div class="tech-hover">KNX • Zigbee • SolarEdge • Xiaomi</div>
+    </div>
+
+    <!-- Carte IA & IoT -->
+    <div class="service-card">
+        <div class="service-icon">
+            <i class="fas fa-robot"></i>
+        </div>
+        <h3>🤖 Solutions Intelligentes</h3>
+        <ul class="service-list">
+            <li>Développement IoT sur mesure</li>
+            <li>Intégration IA/chatbots</li>
+            <li>Systèmes embarqués</li>
+            <li>Automatisation industrielle</li>
+        </ul>
+        <div class="tech-hover">Python • TensorFlow • Arduino • Node-RED</div>
+    </div>
+
+    <!-- Carte Services -->
+    <div class="service-card">
+        <div class="service-icon">
+            <i class="fas fa-graduation-cap"></i>
+        </div>
+        <h3>🎓 Services Techniques</h3>
+        <ul class="service-list">
+            <li>Développement web moderne</li>
+            <li>Programmation Python/C++</li>
+            <li>Bureautique avancée</li>
+            <li>Certifications énergies vertes</li>
+        </ul>
+        <div class="tech-hover">React • AutoCAD • Office 365 • Solar</div>
+    </div>
+
+    <!-- Carte Événements -->
+    <div class="service-card">
+        <div class="service-icon">
+            <i class="fas fa-calendar-alt"></i>
+        </div>
+        <h3>📅 Événements Tech</h3>
+        <ul class="service-list">
+            <li>Hackathons & compétitions</li>
+            <li>Ateliers pratiques</li>
+            <li>Conférences experts</li>
+            <li>Expositions innovantes</li>
+        </ul>
+        <div class="tech-hover">Robotics • AI • Web3 • DevOps</div>
+    </div>
+</div>
+
+<!-- Call to Action -->
+<div class="service-cta">
+    <p>Prêt à révolutionner votre expérience technologique ?</p>
+    <div class="cta-group">
+        <a style="text-decoration: none;" href="mailto:zosroc@gmail.com" class="cta-button pulse">
+            <i class="fas fa-phone"></i> Contactez-nous
+        </a>
+        <a style="text-decoration: none;" href="{% url 'myformation' %}" class="cta-button pulse">
+            <i class="fas fa-chalkboard-teacher"></i> Inscription formation
+        </a>
+    </div>
+</div>
+</section>
+<section class="technologies" id="technologies">
+    <h2 class="section-title">Nos Partenaires Technologiques</h2>
+    <div class="gallery-grid">
+        <div class="gallery-item">
+            <img src="/media/rfi.jpg" alt="Projet 1">
+        </div>
+        <div class="gallery-item">
+            <img src="/media/briec.jpg" alt="Projet 2">
+        </div>
+       
+    </div>
+</section>
+
+
+{% endblock content%}

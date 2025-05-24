@@ -1,0 +1,176 @@
+<!-- templates/formations/formation_form.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="custom-form-container">
+    <br><br><br>
+    <h2 class="form-title">{% if object %}Modifier{% else %}Créer{% endif %} une Catégorie</h2>
+    
+    <form action="{% if object %}{% url 'update_categ' object.id %}{% else %}{% url 'formation_create' %}{% endif %}" method="POST" enctype="multipart/form-data" class="formation-form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="{{ form.title.id_for_label }}">Titre</label>
+            {{ form.Title }}
+            {% if form.title.errors %}
+                <div class="error-message">{{ form.title.errors }}</div>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn-primary">
+            {% if object %}Mettre à jour{% else %}Créer{% endif %}
+        </button>
+    </form>
+   
+</div>
+
+<style>
+    /* static/css/formations.css */
+.custom-form-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    background: linear-gradient(to right, #0a0a0a, #1a1a2e);
+}
+
+.form-title {
+    color: #7eafe0;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-family: 'Arial', sans-serif;
+}
+
+.formation-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.formation-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #62a7ec;
+}
+
+.formation-form .form-control {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ffffff29;
+    color: white;
+    border-radius: 4px;
+    transition: border-color 0.3s ease;
+    background-color: rgb(1, 1, 18);
+}
+
+/* Styles pour l'éditeur de texte riche */
+.rich-text-editor {
+    border: 1px solid #ffffff29;
+    border-radius: 4px;
+    background-color: rgb(1, 1, 18);
+}
+
+.editor-toolbar {
+    background: #0d0d1a;
+    padding: 8px;
+    border-bottom: 1px solid #ffffff29;
+    display: flex;
+    gap: 8px;
+    border-radius: 4px 4px 0 0;
+}
+
+.tool-btn {
+    background: #1a1a2e;
+    color: #62a7ec;
+    border: 1px solid #62a7ec;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tool-btn:hover {
+    background: #62a7ec;
+    color: #0a0a0a;
+}
+
+.color-picker {
+    background: #1a1a2e;
+    border: 1px solid #62a7ec;
+    border-radius: 4px;
+    height: 30px;
+    width: 30px;
+    cursor: pointer;
+}
+
+.editor-content {
+    min-height: 200px;
+    padding: 15px;
+    outline: none;
+    color: white;
+    line-height: 1.6;
+}
+
+.editor-content:empty:before {
+    content: attr(data-placeholder);
+    color: #62a7ec;
+    opacity: 0.6;
+}
+
+.editor-content img {
+    max-width: 100%;
+    height: auto;
+    margin: 10px 0;
+    border-radius: 4px;
+}
+
+.editor-content a {
+    color: #7eafe0;
+    text-decoration: underline;
+}
+
+/* Conservez vos styles existants */
+.formation-form .form-control[type="date"] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="white" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-1.99.9-1.99 2L3 20c0 1.1.89 2 1.99 2H19c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 20px;
+}
+
+.formation-form .form-control:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 5px rgba(52,152,219,0.3);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.btn-primary {
+    background: #3498db;
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: #2980b9;
+}
+
+.error-message {
+    color: #e74c3c;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+</style>
+
+
+{% endblock %}

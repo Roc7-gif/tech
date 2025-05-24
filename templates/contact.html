@@ -1,0 +1,507 @@
+{% extends 'base.html'%}
+
+{% block content%}
+
+
+
+<style>
+    :root {
+        --dark-1: #0a0a0a;
+        --dark-2: #000125;
+        --neon-orange: #ff5e00;
+        --neon-yellow: #ffd700;
+        --text-light: #f5f5f7;
+        --glass: rgba(255, 255, 255, 0.05);
+        --glow: 0 0 10px rgba(255, 94, 0, 0.7);
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--dark-1);
+        color: var(--text-light);
+        overflow-x: hidden;
+    }
+
+    .contact-section {
+        position: relative;
+        min-height: 100vh;
+        padding: 4rem 2rem;
+        background: linear-gradient(135deg, var(--dark-1), var(--dark-2));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        border: 1px solid transparent;
+        animation: borderPulse 4s infinite alternate;
+    }
+
+    @keyframes borderPulse {
+        0% { border-color: rgba(255, 94, 0, 0.1); }
+        100% { border-color: rgba(255, 215, 0, 0.3); }
+    }
+
+    .particles-background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+    }
+
+    .contact-container {
+        display: flex;
+        max-width: 1200px;
+        width: 100%;
+        background: var(--glass);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        position: relative;
+        z-index: 1;
+        opacity: 0;
+        transform: translateY(50px);
+    }
+
+    .contact-form {
+        flex: 1;
+        padding: 3rem;
+        position: relative;
+    }
+
+    .contact-form::before {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 1px;
+        height: 80%;
+        background: linear-gradient(to bottom, 
+            transparent, 
+            rgba(255, 94, 0, 0.5), 
+            transparent);
+    }
+
+    .contact-form h2 {
+        font-size: 2.5rem;
+        margin-bottom: 2rem;
+        background: linear-gradient(to right, var(--neon-orange), var(--neon-yellow));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: var(--glow);
+    }
+
+    .input-group {
+        position: relative;
+        margin-bottom: 2rem;
+    }
+
+    .input-group input,
+    .input-group textarea {
+        width: 100%;
+        padding: 1rem 0;
+        font-size: 1rem;
+        color: var(--text-light);
+        background: transparent;
+        border: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        outline: none;
+        transition: all 0.3s ease;
+    }
+
+    .input-group textarea {
+        resize: none;
+        min-height: 100px;
+    }
+
+    .input-group label {
+        position: absolute;
+        top: 1rem;
+        left: 0;
+        pointer-events: none;
+        transition: all 0.3s ease;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .input-group .input-highlight {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: linear-gradient(to right, var(--neon-orange), var(--neon-yellow));
+        transition: all 0.4s ease;
+    }
+
+    .input-group input:focus + label,
+    .input-group input:valid + label,
+    .input-group textarea:focus + label,
+    .input-group textarea:valid + label {
+        top: -1.2rem;
+        left: 0;
+        font-size: 0.8rem;
+        color: var(--neon-yellow);
+    }
+
+    .input-group input:focus,
+    .input-group textarea:focus {
+        border-bottom-color: transparent;
+    }
+
+    .input-group input:focus ~ .input-highlight,
+    .input-group textarea:focus ~ .input-highlight {
+        width: 100%;
+    }
+
+    .submit-btn {
+        position: relative;
+        background: linear-gradient(45deg, var(--neon-orange), var(--neon-yellow));
+        color: var(--dark-1);
+        border: none;
+        padding: 1rem 2.5rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 50px;
+        cursor: pointer;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(255, 94, 0, 0.4);
+        z-index: 1;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(255, 94, 0, 0.6);
+        animation: pulse 1.5s infinite;
+    }
+
+    .submit-btn:active {
+        transform: scale(0.95) translateY(0);
+    }
+
+    .btn-liquid {
+        position: absolute;
+        top: -60px;
+        left: 0;
+        width: 100%;
+        height: 200px;
+        background: rgba(255, 255, 255, 0.1);
+        transition: all 0.5s ease;
+        z-index: -1;
+    }
+
+    .submit-btn:hover .btn-liquid {
+        top: -120px;
+    }
+
+    @keyframes pulse {
+        0% { transform: translateY(-3px) scale(1); }
+        50% { transform: translateY(-3px) scale(1.05); }
+        100% { transform: translateY(-3px) scale(1); }
+    }
+
+    .contact-infos {
+        flex: 1;
+        padding: 3rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .info-card {
+        display: flex;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 15px;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        transform-style: preserve-3d;
+    }
+
+    .info-card:hover {
+        transform: translateY(-5px) rotateX(5deg);
+        background: rgba(0, 0, 0, 0.5);
+        box-shadow: 0 10px 30px rgba(255, 94, 0, 0.2);
+    }
+
+    .info-icon {
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(45deg, var(--neon-orange), var(--neon-yellow));
+        color: var(--dark-1);
+        border-radius: 50%;
+        font-size: 1.5rem;
+        margin-right: 1.5rem;
+        transition: all 0.5s ease;
+    }
+
+    .info-card:hover .info-icon {
+        transform: rotateY(180deg) scale(1.1);
+    }
+
+    .info-card p {
+        font-size: 1rem;
+        opacity: 0.9;
+    }
+
+    .social-links {
+        display: flex;
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .social-links a {
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--glass);
+        border-radius: 50%;
+        color: var(--text-light);
+        font-size: 1.3rem;
+        transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .social-links a::before {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(45deg, var(--neon-orange), var(--neon-yellow));
+        top: 100%;
+        left: 0;
+        transition: all 0.3s ease;
+        z-index: -1;
+    }
+
+    .social-links a:hover {
+        transform: translateY(-5px) scale(1.1);
+        color: var(--dark-1);
+        box-shadow: 0 5px 15px rgba(255, 94, 0, 0.4);
+    }
+
+    .social-links a:hover::before {
+        top: 0;
+    }
+
+    .confetti {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: var(--neon-yellow);
+        opacity: 0;
+    }
+
+    @media (max-width: 768px) {
+        .contact-container {
+            flex-direction: column;
+        }
+
+        .contact-form::before {
+            display: none;
+        }
+
+        .contact-form,
+        .contact-infos {
+            padding: 2rem;
+        }
+
+        .info-card {
+            padding: 1rem;
+        }
+    }
+</style>
+<section class="contact-section">
+    <div class="particles-background" id="particles-js"></div>
+    
+    <div class="contact-container" id="contact-container">
+        <!-- Colonne Formulaire -->
+        <div class="contact-form">
+            <h2>Contactez-nous</h2>
+            <form id="contact-form" method="post" action="{% url 'contacted' %}">
+                <div class="input-group"> 
+                {% csrf_token %}
+                        
+                    <input name="nom" type="text" id="name" required >
+                    <label for="name">Votre Nom</label>
+                    <div class="input-highlight"></div>
+                </div>
+                
+                <div class="input-group">
+                    <input name="email" type="email" id="email" required>
+                    <label for="email">Votre Email</label>
+                    <div class="input-highlight"></div>
+                </div>
+                
+                <div class="input-group">
+                    <textarea name="message" id="message" required></textarea>
+                    <label for="message">Votre Message</label>
+                    <div class="input-highlight"></div>
+                </div>
+                
+                <button type="submit" class="submit-btn">
+                    <span>Envoyer</span>
+                </button>
+            </form>
+        </div>
+        
+        <!-- Colonne Infos -->
+        <div class="contact-infos">
+            <div class="info-card">
+                <div class="info-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <p>contact@techdata.com</p>
+            </div>
+            
+            <div class="info-card">
+                <div class="info-icon">
+                    <i class="fas fa-phone-alt"></i>
+                </div>
+                <p>+33 1 23 45 67 89</p>
+            </div>
+            
+            <div class="info-card">
+                <div class="info-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <p>123 Rue Tech, Paris, France</p>
+            </div>
+            
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <div id="confetti-container"></div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+<script>
+    // Initialisation des particules
+    particlesJS("particles-js", {
+        particles: {
+            number: { value: 80, density: { enable: true, value_area: 800 } },
+            color: { value: "#ffd700" },
+            shape: { type: "circle" },
+            opacity: { value: 0.5, random: true },
+            size: { value: 3, random: true },
+            line_linked: { 
+                enable: true, 
+                distance: 150, 
+                color: "#ff5e00", 
+                opacity: 0.4, 
+                width: 1 
+            },
+            move: {
+                enable: true,
+                speed: 2,
+                direction: "none",
+                random: true,
+                straight: false,
+                out_mode: "out"
+            }
+        },
+        interactivity: {
+            detect_on: "canvas",
+            events: {
+                onhover: { enable: true, mode: "repulse" },
+                onclick: { enable: true, mode: "push" }
+            }
+        }
+    });
+
+    // Animation d'entrée
+    gsap.to("#contact-container", {
+        opacity: 1,
+        y: 0,
+        duration: 1.5,
+        ease: "power3.out",
+        scrollTrigger: {
+            trigger: ".contact-section",
+            start: "top 80%",
+            toggleActions: "play none none none"
+        }
+    });
+
+    // Animation des colonnes
+    gsap.from(".contact-form", {
+        x: -100,
+        opacity: 0,
+        duration: 1,
+        delay: 0.5,
+        ease: "back.out(1.7)"
+    });
+
+    gsap.from(".contact-infos", {
+        x: 100,
+        opacity: 0,
+        duration: 1,
+        delay: 0.5,
+        ease: "back.out(1.7)"
+    });
+
+    // Effet de validation
+ 
+    function createConfetti() {
+        const container = document.getElementById('confetti-container');
+        container.innerHTML = '';
+        
+        for (let i = 0; i < 50; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.backgroundColor = i % 2 === 0 ? 'var(--neon-orange)' : 'var(--neon-yellow)';
+            container.appendChild(confetti);
+            
+            gsap.to(confetti, {
+                y: -Math.random() * 200 - 100,
+                x: Math.random() * 200 - 100,
+                rotation: Math.random() * 360,
+                opacity: 1,
+                duration: 2,
+                ease: "power1.out",
+                onComplete: () => {
+                    confetti.remove();
+                }
+            });
+        }
+    }
+
+    // Effet parallaxe sur le formulaire
+    document.addEventListener('mousemove', (e) => {
+        const x = (window.innerWidth / 2 - e.pageX) / 20;
+        const y = (window.innerHeight / 2 - e.pageY) / 20;
+        gsap.to(".contact-container", {
+            rotationY: x,
+            rotationX: y,
+            transformPerspective: 1000,
+            ease: "power1.out",
+            duration: 0.5
+        });
+    });
+</script>
+
+
+{% endblock content%}

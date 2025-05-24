@@ -1,0 +1,333 @@
+<!-- templates/formations/formation_form.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="custom-form-container">
+    <br><br><br>
+    <h2 class="form-title">{% if object %}Modifier{% else %}Créer{% endif %} une Formation</h2>
+    
+    <form {% if object %}action="{% url 'formation_update' object.id %}"{% else %}Créer{% endif %}action="{% url 'formation_create' %}" method="POST" enctype="multipart/form-data" class="formation-form">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            {% for message in messages %}
+            <p class="{{ message.tags }}">{{ message }}</p>
+            {% endfor %}
+          
+           <style>
+        .error { color: red; background: #ffebee; padding: 10px; }
+        .success { color: green; background: #e8f5e9; padding: 10px; }
+        .info { color: blue; background: #e3f2fd; padding: 10px; }
+        .warning { color: orange; background: #fff8e1; padding: 10px; }
+    </style>
+            <label for="{{ form.title.id_for_label }}">Titre</label>
+            {{ form.title }}
+            {% if form.title.errors %}
+                <div class="error-message">{{ form.title.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.description.id_for_label }}">Description</label>
+            <!-- Remplacement du champ description par notre éditeur personnalisé -->
+            <div class="rich-text-editor">
+                <!-- Barre d'outils -->
+                <div class="editor-toolbar">
+
+                    <button type="button" class="tool-btn" onclick="formatText('bold')" title="Gras"><b>B</b></button>
+                    <button type="button" class="tool-btn" onclick="formatText('italic')" title="Italique"><i>I</i></button>
+                    <button type="button" class="tool-btn" onclick="formatText('underline')" title="Souligné"><u>U</u></button>
+                    <button type="button" class="tool-btn" onclick="insertImage()" title="Insérer une image">📷</button>
+                    <button type="button" class="tool-btn" onclick="createLink()" title="Lien">🔗</button>
+                    <input type="color" class="color-picker" onchange="applyColor(this.value)" title="Couleur du texte">
+                    <input type="file" id="file-upload" style="display: none;" accept="image/*">
+                </div>
+                
+                <!-- Zone d'édition -->
+                <div 
+                    id="description-editor" 
+                    class="editor-content" 
+                    contenteditable="true"
+                    data-placeholder="Décrivez votre formation ici..."
+                >{% if form.description.value %}{{ form.description.value }}{% endif %}</div>
+                
+                <!-- Champ caché pour le contenu formaté -->
+                <textarea id="{{ form.description.id_for_label }}" name="{{ form.description.name }}" style="display:none;">{% if form.description.value %}{{ form.description.value }}{% endif %}</textarea>
+            </div>
+            {% if form.description.errors %}
+                <div class="error-message">{{ form.description.errors }}</div>
+            {% endif %}
+        </div>
+        <div class="form-row">
+           
+          
+            <div class="form-group">
+                <label for="{{ form.date_debut.id_for_label }}">Date de début</label>
+                {{ form.date_debut }}
+                {% if form.date_debut.errors %}
+                <div class="error-message">{{ form.date_debut.errors }}</div>
+            {% endif %}
+            </div>
+           
+            
+            <div class="form-group">
+                <label for="{{ form.date_fin.id_for_label }}">Date de fin</label>
+                {{ form.date_fin }}
+                {% if form.date_fin.errors %}
+                <div class="error-message">{{ form.date_fin.errors }}</div>
+            {% endif %}
+            </div>
+            
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.image.id_for_label }}">Image</label>
+            {{ form.image }}
+            {% if form.image.errors %}
+            <div class="error-message">{{ form.image.errors }}</div>
+        {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.image.id_for_label }}">Catégorie</label>
+            {{ form.categorie }}
+            {% if form.categorie.errors %}
+            <div class="error-message">{{ form.categorie.errors }}</div>
+        {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.image.id_for_label }}">Price</label>
+            {{ form.price }}
+            {% if form.price.errors %}
+            <div class="error-message">{{ form.price.errors }}</div>
+        {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.image.id_for_label }}">Plce</label>
+            {{ form.place }}
+            {% if form.place.errors %}
+            <div class="error-message">{{ form.place.errors }}</div>
+        {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.image.id_for_label }}">Nombre de temps en generale</label>
+            {{ form.heure }}
+            {% if form.heure.errors %}
+            <div class="error-message">{{ form.heure.errors }}</div>
+        {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.statut.id_for_label }}">Statut</label>
+            {{ form.statut }}
+        </div>
+
+        <button type="submit" class="btn-primary">
+            {% if object %}Mettre à jour{% else %}Créer{% endif %}
+        </button>
+    </form>
+</div>
+
+<style>
+    /* static/css/formations.css */
+.custom-form-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    background: linear-gradient(to right, #0a0a0a, #1a1a2e);
+}
+
+.form-title {
+    color: #7eafe0;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-family: 'Arial', sans-serif;
+}
+
+.formation-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.formation-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #62a7ec;
+}
+
+.formation-form .form-control {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ffffff29;
+    color: white;
+    border-radius: 4px;
+    transition: border-color 0.3s ease;
+    background-color: rgb(1, 1, 18);
+}
+
+/* Styles pour l'éditeur de texte riche */
+.rich-text-editor {
+    border: 1px solid #ffffff29;
+    border-radius: 4px;
+    background-color: rgb(1, 1, 18);
+}
+
+.editor-toolbar {
+    background: #0d0d1a;
+    padding: 8px;
+    border-bottom: 1px solid #ffffff29;
+    display: flex;
+    gap: 8px;
+    border-radius: 4px 4px 0 0;
+}
+
+.tool-btn {
+    background: #1a1a2e;
+    color: #62a7ec;
+    border: 1px solid #62a7ec;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tool-btn:hover {
+    background: #62a7ec;
+    color: #0a0a0a;
+}
+
+.color-picker {
+    background: #1a1a2e;
+    border: 1px solid #62a7ec;
+    border-radius: 4px;
+    height: 30px;
+    width: 30px;
+    cursor: pointer;
+}
+
+.editor-content {
+    min-height: 200px;
+    padding: 15px;
+    outline: none;
+    color: white;
+    line-height: 1.6;
+}
+
+.editor-content:empty:before {
+    content: attr(data-placeholder);
+    color: #62a7ec;
+    opacity: 0.6;
+}
+
+.editor-content img {
+    max-width: 100%;
+    height: auto;
+    margin: 10px 0;
+    border-radius: 4px;
+}
+
+.editor-content a {
+    color: #7eafe0;
+    text-decoration: underline;
+}
+
+/* Conservez vos styles existants */
+.formation-form .form-control[type="date"] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="white" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-1.99.9-1.99 2L3 20c0 1.1.89 2 1.99 2H19c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 20px;
+}
+
+.formation-form .form-control:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 5px rgba(52,152,219,0.3);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.btn-primary {
+    background: #3498db;
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: #2980b9;
+}
+
+.error-message {
+    color: #e74c3c;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+</style>
+
+<script>
+// Sauvegarde le contenu avant soumission du formulaire
+document.querySelector('form').addEventListener('submit', function() {
+    document.getElementById('{{ form.description.id_for_label }}').value = 
+        document.getElementById('description-editor').innerHTML;
+});
+
+// Fonctions de mise en forme
+function formatText(command, value = null) {
+    document.execCommand(command, false, value);
+    document.getElementById('description-editor').focus();
+}
+
+function insertImage() {
+    document.getElementById('file-upload').click();
+}
+
+document.getElementById('file-upload').addEventListener('change', function(e) {
+    if (e.target.files.length > 0) {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        
+        reader.onload = function(event) {
+            const img = document.createElement('img');
+            img.src = event.target.result;
+            img.style.maxWidth = '100%';
+            img.style.borderRadius = '4px';
+            document.getElementById('description-editor').appendChild(img);
+        };
+        
+        reader.readAsDataURL(file);
+    }
+});
+
+function createLink() {
+    const url = prompt('Entrez l\'URL:', 'http://');
+    if (url) {
+        document.execCommand('createLink', false, url);
+    }
+}
+
+function applyColor(color) {
+    document.execCommand('foreColor', false, color);
+}
+
+// Initialisation - charge le contenu existant si disponible
+document.addEventListener('DOMContentLoaded', function() {
+    const hiddenField = document.getElementById('{{ form.description.id_for_label }}');
+    const editor = document.getElementById('description-editor');
+    if (hiddenField.value) {
+        editor.innerHTML = hiddenField.value;
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,476 @@
+{% extends 'base.html' %}
+{% block content %}
+   <title>Détail Formation - TechData</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --dark-bg: #0a0a0a;
+            --dark-card: #121212;
+            --neon-orange: #FFA500;
+            --neon-yellow: #FFD700;
+            --text-light: #f5f5f5;
+            --text-muted: #aaaaaa;
+            --glow-orange: 0 0 10px rgba(255, 165, 0, 0.5);
+            --glow-yellow: 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        /* Header Formation */
+        .formation-header {
+            height: 50vh;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            overflow: hidden;
+            transform: translateZ(0);
+        }
+
+        .header-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, var(--dark-bg), transparent);
+            z-index: 1;
+        }
+
+        .formation-badge {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            padding: 0.5rem 1.5rem;
+            border-radius: 30px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            z-index: 2;
+            box-shadow: var(--glow-orange);
+        }
+
+        .formation-badge.bientot {
+            background: linear-gradient(135deg, var(--neon-orange), var(--neon-yellow));
+            animation: pulse 2s infinite alternate;
+        }
+
+        .formation-badge.en_cours {
+            background: linear-gradient(135deg, #00b09b, #96c93d);
+            box-shadow: 0 0 15px rgba(0, 176, 155, 0.5);
+        }
+
+        .formation-badge.termine {
+            background: linear-gradient(135deg, #8E2DE2, #4A00E0);
+            box-shadow: 0 0 15px rgba(142, 45, 226, 0.5);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: var(--glow-orange); }
+            100% { transform: scale(1.05); box-shadow: 0 0 25px rgba(255, 165, 0, 0.8); }
+        }
+
+        /* Contenu Principal */
+        .formation-content {
+            max-width: 100vw;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 3rem;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .formation-main {
+            background: var(--dark-card);
+            padding: 2rem;
+            border-radius: 10px;
+            border-left: 3px solid var(--neon-orange);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .formation-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--neon-yellow);
+            text-shadow: var(--glow-yellow);
+        }
+
+        .formation-description {
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        .formation-description p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Sidebar */
+        .formation-sidebar {
+            position: sticky;
+            top: 20px;
+            align-self: start;
+        }
+
+        .meta-card {
+            background: var(--dark-card);
+            padding: 2rem;
+            min-height: 70vh;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .meta-card h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--neon-orange);
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+        }
+
+        .meta-item {
+            display: inline-block;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .meta-item i {
+            color: var(--neon-yellow);
+            width: 30px;    
+            font-size: 1.2rem;
+        }
+
+        .progress-container {
+            margin: 2rem 0;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, var(--neon-orange), var(--neon-yellow));
+            width: 65%; /* Ajuster dynamiquement */
+        }
+
+        .countdown {
+            text-align: center;
+            margin: 2rem 0;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .countdown h4 {
+            color: var(--neon-yellow);
+            margin-bottom: 1rem;
+        }
+
+        .countdown-timer {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        .formation-description img{
+            font-size: 1.1rem;
+            line-height: 1.8;
+            width: 45%;
+        }
+
+        .countdown-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            border: 1px solid var(--neon-orange);
+        }
+
+        .countdown-value {
+            font-size: 1.5rem;
+            color: var(--neon-yellow);
+        }
+
+        .countdown-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            opacity: 0.7;
+        }
+
+        .cta-button {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--neon-orange), var(--neon-yellow));
+            color: var(--dark-bg);
+            border: none;
+            border-radius: 5px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 165, 0, 0.3);
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: all 0.5s ease;
+            z-index: -1;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        /* Formations Similaires */
+        .related-formations {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem 4rem;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .related-formations h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--neon-yellow);
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+            text-shadow: var(--glow-yellow);
+        }
+
+        .formations-carousel {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .formation-card {
+            background: var(--dark-card);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .formation-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 165, 0, 0.3);
+        }
+
+        .formation-card-image {
+            height: 180px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .formation-card-content {
+            padding: 1.5rem;
+        }
+
+        .formation-card-title {
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 0.5rem;
+            color: var(--text-light);
+        }
+
+        .formation-card-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .formation-card-link {
+            display: inline-block;
+            color: var(--neon-orange);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .formation-card-link:hover {
+            color: var(--neon-yellow);
+            text-shadow: var(--glow-orange);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .formation-content {
+                grid-template-columns: 1fr;
+            }
+
+            .formation-sidebar {
+                position: static;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .formation-header {
+                height: 40vh;
+            }
+
+            .formation-title {
+                font-size: 2rem;
+            } .formation-description img{
+           
+            width: 95%;
+        }
+
+            .formation-badge {
+                top: 15px;
+                right: 15px;
+                font-size: 0.8rem;
+                padding: 0.3rem 1rem;
+            }
+        }
+    </style>
+    <!-- Header Formation -->
+    <div class="formation-header" style='background-image: url(/media/{{projet.image.url}});background-size: 120% 200%;background-position-y: 5px;'>
+        <div class="header-overlay"></div>
+        
+    </div>
+
+    <!-- Contenu Principal -->
+    <div class="formation-content">
+        <div class="formation-main">
+            <h1 class="formation-title">{{projet.title}}</h1>
+            <div class="formation-description" >
+                {{projet.description|safe}}
+        </div>
+    </div>
+    <div class="formation-sidebar">
+        <div class="meta-card">
+            <br><br>
+            <h3>Technologies utilisées</h3>
+           
+            <div class="meta-item">
+                <ul>
+                    {% for i in technologie %}
+                <li>
+                    <span>{{i}}</span>
+                </li><br>
+             
+
+        
+                {% endfor%}
+                </ul>
+
+
+            </div>
+            
+            <div class=" meta-item">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Publié le  {{ projet.created_at|date:"l d F Y " }} </span>
+            </div>
+        </div>
+
+
+    
+    </div>
+    </div>
+
+    <!-- Formations Similaires -->
+    <div class="related-formations">
+        <h2>Projets similaires</h2>
+        <div class="formations-carousel">
+            {% for projet   in details %}
+
+            <div class="formation-card">
+                <div class="formation-card-image" style="background-image: url(/media/{{projet.image.url}})"></div>
+                <span class="project-badge">{{project.category}}</span>
+
+                <div class="formation-card-content">
+                    <h3 class="formation-card-title">{{projet.title}}</h3>
+                <div class="formation-card-meta">       
+                    <a href="{% url 'detailprojet' projet.id %}" class="formation-card-link">Voir détails →</a>
+                </div>
+            </div>
+        </div>
+            {% endfor %}
+        
+    </div>
+</div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script>
+
+        // Animation au scroll
+        gsap.registerPlugin(ScrollTrigger);
+
+        gsap.to(".formation-content", {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            scrollTrigger: {
+                trigger: ".formation-header",
+                start: "bottom 80%",
+                toggleActions: "play none none none"
+            }
+        });
+
+        gsap.to(".related-formations", {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            scrollTrigger: {
+                trigger: ".formation-content",
+                start: "top 80%",
+                toggleActions: "play none none none"
+            }
+        });
+
+        // Effet parallaxe sur l'header
+        gsap.to(".formation-header", {
+            y: "20%",
+            scrollTrigger: {
+                trigger: ".formation-header",
+                start: "top bottom",
+                end: "bottom top",
+                scrub: true
+            }
+        });
+
+    
+    </script>
+
+{% endblock content  %}

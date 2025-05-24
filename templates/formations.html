@@ -1,0 +1,502 @@
+
+{% extends 'base.html' %}
+{% load html_filters %}
+
+{% block content %}
+
+    <style>
+        :root {
+            --dark-bg: #0F0F12;
+            --tech-blue: #FFA500;
+            --light-text: #F5F5F7;
+            --card-bg: #1E1E1E;
+            --neon-effect: 0 0 10px#ffd70080;
+  /* Couleurs de base inspirées de votre logo */
+  --logo-yellow: #FFD700;  /* Jaune or */
+  --logo-orange: #FFA500;  /* Orange vif */
+  --logo-dark: #1A1A1A;    /* Noir profond */
+
+  /* Dérivés pour une harmonie visuelle */
+  --primary: #FFA500;      /* Orange comme couleur principale */
+  --primary-light: #FFB732; /* Orange plus clair */
+  --primary-dark: #CC8400;  /* Orange plus foncé */
+  
+  --secondary: #FFD700;    /* Jaune comme couleur secondaire */
+  --secondary-light: #FFE44D;
+  --secondary-dark: #D4B300;
+  
+  /* Neutres */
+  --dark-bg: #121212;      /* Fond sombre */
+  --card-bg: #1E1E1E;      /* Fond des cartes */
+  --text-light: #F5F5F5;   /* Texte clair */
+  --text-muted: #AAAAAA;   /* Texte secondaire */
+  
+  /* Accents */
+  --accent-tech: #FFA500;  /* Bleu tech pour contrast */
+  --success: #4CAF50;      /* Vert pour succès */
+  --warning: #FFC107;      /* Jaune avertissement */
+  --error: #F44336;        /* Rouge erreur */
+
+  /* Effets spéciaux */
+  --neon-orange: 0 0 10px rgba(255, 165, 0, 0.7);
+  --neon-yellow: 0 0 8px #ffd70080;
+  --glow-effect: 0 0 15px rgba(255, 165, 0, 0.4);
+
+           
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--light-text);
+            padding-top: 80px;
+        }
+
+        /* Header */
+        .portfolio-header {
+            text-align: center;
+            padding: 3rem 1rem;
+            background: linear-gradient(to right, #0F0F12, #1A1A24, #0F0F12);
+            margin-bottom: 2rem;
+        }
+
+        .portfolio-header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #FFA500, #FFA500);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 15px#ffd70080;
+        }
+
+        .portfolio-header p {
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        /* Filtres */
+        .filter-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding: 1rem 5%;
+            margin-bottom: 2rem;
+        }
+
+        .filter-btn {
+            padding: 0.6rem 1.2rem;
+            background: transparent;
+            color: var(--light-text);
+            border: 1px solid var(--tech-blue);
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--tech-blue);
+            box-shadow: var(--neon-effect);
+            transform: translateY(-2px);
+        }
+
+        /* Grille de projets */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 0 5%;
+            margin-bottom: 3rem;
+        }
+
+        .project-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform: translateY(50px);
+            opacity: 0;
+            position: relative;
+            height: 440px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .project-card.visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px) !important;
+            box-shadow: 0 15px 30px #ed8e4a33;
+        }
+
+        .project-image {
+            height: 55%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .project-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .project-card:hover .project-image img {
+            transform: scale(1.05);
+        }
+
+        .project-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--tech-blue);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .project-content {
+            padding: 1.5rem;
+            height: 20%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+            color: white;
+        }
+
+        .project-desc {
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+            flex-grow: 1;
+            opacity: 0.8;
+        }
+
+        .project-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .project-tags span {
+            background: rgba(42, 117, 246, 0.2);
+            color: var(--tech-blue);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        /* Lightbox */
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .lightbox.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .lightbox-content {
+            background: var(--card-bg);
+            width: 80%;
+            max-width: 900px;
+            border-radius: 10px;
+            overflow: hidden;
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .lightbox.active .lightbox-content {
+            transform: scale(1);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: var(--tech-blue);
+            transform: rotate(90deg);
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            padding: 2rem;
+            gap: 1rem;
+        }
+
+        .page-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .page-btn.active, .page-btn:hover {
+            background: var(--tech-blue);
+            box-shadow: var(--neon-effect);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .portfolio-header h1 {
+                font-size: 2rem;
+            }
+            
+            .lightbox-content {
+                width: 95%;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Header -->
+    <header class="portfolio-header">
+        
+        <h1>Formez-vous aux technologies de demain</h1>
+        <p>
+            Des modules pratiques en informatique, IoT, domotique et développement web pour acquérir des compétences concrètes et devenir acteur du numérique.
+        </p>
+    </header>
+    <div class="filter-container">
+        <button class="filter-btn active" data-filter="all">TOUS</button>
+        <button class="filter-btn" style="text-transform: uppercase;" data-filter="BIENTOT">BIENTÔT</button>
+        <button class="filter-btn" style="text-transform: uppercase;" data-filter="EN_COURS">ENCOURS</button>
+        <button class="filter-btn" style="text-transform: uppercase;" data-filter="TERMINEE">TERMINEE</button>
+        
+    </div>
+    <!-- Grille de projets -->
+    <div class="projects-grid">
+        <!-- Projet 1 -->
+        {% for formation in formations %}
+        <div class="project-card" data-status = '{{formation.statut}}' data-category="domotique">
+            <div class="project-image">
+                <a href="/media/{{formation.image.url}}"><img src="/media/{{formation.image.url}}" alt="{{formation.title}}"></a>
+            </div>
+            <style>
+                .cta-button{
+                    margin: auto;
+                    width: auto;
+                    
+                }
+            </style>
+            <div class="project-content">
+                <h3 class="project-title" > {{formation.title}}</h3>
+                <div style=" min-height :10.5vh; font-size: 1em;max-height: 40vh;overflow: hidden;"  class="project-desc" style="text-align: justify;"  >
+                    {{formation.description|truncatewords:100|safe_html|safe}}
+                </div>
+        <a href="{% url 'detailform' formation.id %}" style="text-decoration: none; " class="cta-button" > Voir plus </a>
+
+            </div>
+
+        </div>
+        {% endfor %}
+    </div>
+
+  
+
+    <!-- Pagination -->
+    <div class="pagination">
+        <div class="page-btn active">1</div>
+        <div class="page-btn">2</div>
+        <div class="page-btn">3</div>
+        <div class="page-btn"><i class="fas fa-chevron-right"></i></div>
+    </div>
+
+    <!-- Lightbox -->
+    <div class="lightbox">
+        <div class="lightbox-content">
+            <div class="close-btn">
+                <i class="fas fa-times"></i>
+            </div>
+            <!-- Contenu dynamique sera injecté ici par JS -->
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <script>
+           // Navbar scroll effect
+           window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Mobile menu toggle
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navLinks = document.querySelector('.nav-links');
+
+        menuToggle.addEventListener('click', function() {
+            navLinks.classList.toggle('active');
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animation d'entrée des cartes
+            const projectCards = document.querySelectorAll('.project-card');
+            gsap.to(projectCards, {
+                y: 0,
+                opacity: 1,
+                duration: 0.8,
+                stagger: 0.1,
+                ease: "power2.out",
+                scrollTrigger: {
+                    trigger: ".projects-grid",
+                    start: "top 80%",
+                    toggleActions: "play none none none"
+                }
+            });
+
+            // Filtrage des projets
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Gestion des boutons actifs
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const filter = this.dataset.filter;
+                    const cards = document.querySelectorAll('.project-card');
+                    
+                    cards.forEach(card => {
+                        if (filter === 'all' || card.dataset.status === filter) {
+                            card.style.display = 'block';
+                            gsap.fromTo(card, 
+                                { opacity: 0, y: 20 },
+                                { opacity: 1, y: 0, duration: 0.5 }
+                            );
+                        } else {
+                            gsap.to(card, {
+                                opacity: 0,
+                                y: 20,
+                                duration: 0.3,
+                                onComplete: () => card.style.display = 'none'
+                            });
+                        }
+                    });
+                });
+            });
+
+            // Lightbox
+            const lightbox = document.querySelector('.lightbox');
+            const closeBtn = document.querySelector('.close-btn');
+            
+            projectCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const title = this.querySelector('.project-title').textContent;
+                    const desc = this.querySelector('.project-desc').textContent;
+                    const tags = Array.from(this.querySelectorAll('.project-tags span')).map(tag => tag.textContent).join(', ');
+                    const imgSrc = this.querySelector('img').src;
+                    const category = this.querySelector('.project-badge').textContent;
+                    
+                    const content = `
+                        <div class="lightbox-image" style="height: 300px; overflow: hidden;">
+                            <img src="${imgSrc}" alt="${title}" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <div style="padding: 2rem;">
+                            <span style="background: #FFA500; color: white; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">${category}</span>
+                            <h2 style="font-family: 'Orbitron', sans-serif; margin: 1rem 0; color: white;">${title}</h2>
+                            <p style="margin-bottom: 1.5rem; line-height: 1.6;">${desc}</p>
+                            <div style="margin-bottom: 1.5rem;">
+                                <h3 style="font-size: 1rem; margin-bottom: 0.5rem; color: #FFA500;">Technologies utilisées</h3>
+                                <p>${tags}</p>
+                            </div>
+                            <button style="background: #FFA500; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 5px; cursor: pointer; font-weight: 600;">Voir le projet</button>
+                        </div>
+                    `;
+                    
+                    document.querySelector('.lightbox-content').innerHTML = content;
+                    lightbox.classList.add('active');
+                });
+            });
+            
+            closeBtn.addEventListener('click', function() {
+                lightbox.classList.remove('active');
+            });
+            
+            lightbox.addEventListener('click', function(e) {
+                if (e.target === lightbox) {
+                    lightbox.classList.remove('active');
+                }
+            });
+
+            // Pagination
+            const pageBtns = document.querySelectorAll('.page-btn');
+            pageBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (!this.classList.contains('active')) {
+                        pageBtns.forEach(b => b.classList.remove('active'));
+                        this.classList.add('active');
+                        // Ici vous pourriez ajouter une logique AJAX pour charger plus de projets
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock content  %}

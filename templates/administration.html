@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<br>
+<br>
+<br>
+<br>
+<div class="admin-dashboard">
+    <div class="sidebar bg-dark text-white p-3">
+        <h3 class="mb-4">Administration</h3>
+        <div class="list-group">
+            <a href="{% url 'admin_dashbord' %}" class="list-group-item list-group-item-action">Tableau de bord</a>
+            <a href="{% url 'list_formations' %}" class="list-group-item list-group-item-action">Formations</a>
+            <a href="{% url 'list_projects' %}" class="list-group-item list-group-item-action">Projets</a>
+            <a href="{% url 'list_categories' %}" class="list-group-item list-group-item-action">Catégories</a>
+            <a href="{% url 'list_tech' %}" class="list-group-item list-group-item-action">Technologies</a>
+            <a href="{% url 'gestion_utilisateurs' %}" class="list-group-item list-group-item-action">Utilisateurs</a>
+        </div>
+    </div>
+
+    <div class="main-content p-4">
+        <h2 class="mb-4">Tableau de bord</h2>
+        
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card text-white bg-primary mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Utilisateurs</h5>
+                        <p class="card-text display-4">{{ utilisateurs.count }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-success mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Formations</h5>
+                        <p class="card-text display-4">{{ formations.count }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-info mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Projets</h5>
+                        <p class="card-text display-4">{{ projets.count }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-warning mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Participations</h5>
+                        <p class="card-text display-4">{{ participations.count }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4>Actions rapides</h4>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2 d-md-block">
+                    <a href="{% url 'formation_create' %}" class="btn btn-primary">Nouvelle Formation</a>
+                    <a href="{% url 'project_create' %}" class="btn btn-success">Nouveau Projet</a>
+                    <a href="{% url 'create_categ' %}" class="btn btn-info">Nouvelle Catégorie</a>
+                    <a href="{% url 'create_tech' %}" class="btn btn-warning">Nouvelle Technologie</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

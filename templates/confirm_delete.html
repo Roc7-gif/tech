@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header bg-danger text-white">
+            <h3>Confirmation de suppression</h3>
+        </div>
+        <div class="card-body">
+            <p>Êtes-vous sûr de vouloir supprimer définitivement :</p>
+            <h4 class="text-danger mb-4">{{ object }}</h4>
+            
+            <form method="post">
+                {% csrf_token %}
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Confirmer
+                    </button>
+                    <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary">
+                        <i class="bi bi-x-circle"></i> Annuler
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
