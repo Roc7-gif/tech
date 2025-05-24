@@ -3,10 +3,11 @@
 
 {% block content %}
 <div class="custom-form-container">
+  
     <br><br><br>
-    <h2 class="form-title">{% if object %}Modifier{% else %}Créer{% endif %} une Catégorie</h2>
+    <h2 class="form-title">{% if object %}Modifier{% else %}Créer{% endif %} une Technologie</h2>
     
-    <form action="{% if object %}{% url 'update_categ' object.id %}{% else %}{% url 'create_categ' %}{% endif %}" method="POST" enctype="multipart/form-data" class="formation-form">
+    <form action="{% if object %}{% url 'update_tech' object.id %}{% else %}{% url 'create_tech' %}{% endif %}" method="POST" enctype="multipart/form-data" class="formation-form">
         {% csrf_token %}
         <div class="form-group">
             <label for="{{ form.title.id_for_label }}">Titre</label>
@@ -20,7 +21,6 @@
             {% if object %}Mettre à jour{% else %}Créer{% endif %}
         </button>
     </form>
-   
 </div>
 
 <style>

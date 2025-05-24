@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<br>
+<br>
+<br>
+<br>
+<br>
+<div class="container">
+    <h2 class="mb-4">Gestion des Attestations</h2>
+    
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Formation</th>
+                    <th>Statut </th>
+                    <th>Attestation</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                {% for p in form %}
+                <tr>
+                    <td style="color: white;">{{ p.form.title }}</td>
+                    <td style="color: white;">{{ p.form.attestation }} </td>
+                   
+                    <td style="color: white;">
+                        {% if p.attestation %}
+                        <a href="{{ p.attestation.url }}" class="btn btn-sm btn-success" download>
+                            <i class="bi bi-download"></i> Télécharger
+                        </a>
+                        {% else %}
+                        <span class="text-muted">Aucun fichier</span>
+                        {% endif %}
+                    </td>
+                    <td style="color: white;">
+                        <button type="button" class="btn btn-sm btn-primary" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#uploadModal{{ p.form.id }}">
+                            <i class="bi bi-upload"></i> Uploader
+                        </button>
+                    </td>
+                </tr>
+                
+                <!-- Modal d'upload -->
+                <div class="modal fade"   id="uploadModal{{ p.form.id }}" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Uploader une attestation</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <form action = "{% url 'upload_attestation' p.form.id %}" method="post" action="" enctype="multipart/form-data">
+                                <div class="modal-body">
+                                    {% csrf_token %}
+                                    <div class="mb-3">
+                                        <label class="form-label">Fichier d'attestation</label>
+                                        <input type="file" name="attestation" 
+                                               class="form-control" 
+                                               accept=".pdf,.doc,.docx" required>
+                                        <small class="form-text text-muted">
+                                            Formats acceptés : PDF, DOC, DOCX (max 5MB)
+                                        </small>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Pagination -->
+</div>
+{% endblock %}

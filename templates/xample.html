@@ -1,0 +1,371 @@
+
+from django.db.models import Count, Case, When, IntegerField
+
+class FormationParticipationListView(ListView):
+    model = Formations
+    template_name = 'admin/formation_participations.html'
+    context_object_name = 'formations'
+    paginate_by = 20
+
+    def get_queryset(self):
+        return Formations.objects.annotate(
+            total_participations=Count('participation'),
+            paid_count=Count(
+                Case(
+                    When(participation__paye=True, then=1),
+                    output_field=IntegerField()
+                )
+            )
+        ).filter(total_participations__gt=0).order_by('-date_debut')
+
+
+**2. Nouveau template (formation_participations.html) :**
+html
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Formations avec Participations</h2>
+    
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Formation</th>
+                    <th>Dates</th>
+                    <th>Participations</th>
+                    <th>Statut Paiements</th>
+                    <th>Attestations</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for formation in formations %}
+                <tr>
+                    <td>{{ formation.title }}</td>
+                    <td>
+                        {{ formation.date_debut|date:"d/m/Y" }}<br>
+                        au {{ formation.date_fin|date:"d/m/Y" }}
+                    </td>
+                    <td>
+                        <span class="badge bg-primary">
+                            {{ formation.total_participations }} participants
+                        </span>
+                    </td>
+                    <td>
+                        <div class="progress" style="height: 25px;">
+                            <div class="progress-bar bg-success" 
+                                 style="width: {% widthratio formation.paid_count formation.total_participations 100 %}%">
+                                {{ formation.paid_count }} payés
+                            </div>
+                            <div class="progress-bar bg-danger" 
+                                 style="width: {% widthratio formation.total_participations|sub:formation.paid_count formation.total_participations 100 %}%">
+                                {{ formation.total_participations|sub:formation.paid_count }} impayés
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        {% with formation.participation_set.all as participations %}
+                            <span class="badge {% if participations|all_attestations_uploaded %}bg-success{% else %}bg-warning{% endif %}">
+                                {{ participations|attestation_count }} / {{ formation.total_participations }}
+                            </span>
+                        {% endwith %}
+                    </td>
+                    <td>
+                        <a href="{% url 'formation_attestations' formation.id %}" 
+                           class="btn btn-sm btn-primary">
+                            <i class="bi bi-upload"></i> Gérer
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    {% include 'includes/pagination.html' %}
+</div>
+{% endblock %}
+
+
+**3. Ajout de filtres personnalisés (templatetags/custom_filters.py) :**
+python
+from django import template
+
+register = template.Library()
+
+@register.filter
+def sub(value, arg):
+    return value - arg
+
+@register.filter
+def all_attestations_uploaded(participations):
+    return all(p.attestation for p in participations)
+
+@register.filter
+def attestation_count(participations):
+    return sum(1 for p in participations if p.attestation)
+
+
+**4. Nouvelle vue de gestion par formation (views.py) :**
+python
+@login_required
+def formation_attestations(request, formation_id):
+    formation = get_object_or_404(Formations, id=formation_id)
+    participations = formation.participation_set.select_related('user')
+    
+    if request.method == 'POST':
+        # Gestion de l'upload multiple
+        pass
+    
+    return render(request, 'admin/formation_attestation_management.html', {
+        'formation': formation,
+        'participations': participations
+    })
+
+
+**5. Configuration des URLs (urls.py) :**
+python
+path('admin/formation-participations/', FormationParticipationListView.as_view(), name='formation_participations'),
+path('admin/formation-attestations/<int:formation_id>/', formation_attestations, name='formation_attestations'),
+
+
+**6. Template de gestion par formation (formation_attestation_management.html) :**
+html
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Gestion des attestations - {{ formation.title }}</h2>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>Statistiques globales</h5>
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            Total participants: {{ participations|length }}
+                        </li>
+                        <li class="list-group-item">
+                            Attestations uploadées: 
+                            <span class="badge bg-primary">
+                                {{ participations|attestation_count }}
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-8">
+                    <h5>Actions groupées</h5>
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="input-group mb-3">
+                            <input type="file" class="form-control" name="attestations" 
+                                   multiple webkitdirectory directory required>
+                            <button class="btn btn-primary" type="submit">
+                                <i class="bi bi-upload"></i> Upload multiple
+                            </button>
+                        </div>
+                        <small class="text-muted">
+                            Sélectionnez un dossier contenant les fichiers nommés comme "username_formationID.pdf"
+                        </small>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Utilisateur</th>
+                    <th>Email</th>
+                    <th>Statut Paiement</th>
+                    <th>Attestation</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for participation in participations %}
+                <tr>
+                    <td>{{ participation.user.get_full_name }}</td>
+                    <td>{{ participation.user.email }}</td>
+                    <td>
+                        {% if participation.paye %}
+                        <span class="badge bg-success">Payé</span>
+                        {% else %}
+                        <span class="badge bg-danger">Impayé</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if participation.attestation %}
+                        <a href="{{ participation.attestation.url }}" 
+                           class="btn btn-sm btn-success" download>
+                            <i class="bi bi-download"></i>
+                        </a>
+                        {% else %}
+                        <span class="text-muted">Manquante</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-primary"
+                                data-bs-toggle="modal" 
+                                data-bs-target="#uploadModal{{ participation.id }}">
+                            <i class="bi bi-upload"></i>
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% for participation in participations %}
+<!-- Modals individuels -->
+{% endfor %}
+
+{% endblock %}
+
+
+Cette solution permet :
+1. Une vue globale des formations avec leurs statistiques de participation
+2. Un drill-down dans chaque formation pour gérer les attestations
+3. Un système d'upload multiple via sélection de dossier
+4. Une visualisation claire des statuts de paiement et attestations
+5. La gestion groupée et individuelle des attestations
+
+Pour améliorer :
+- Ajouter un système de matching automatique des fichiers uploadés
+- Implémenter l'upload zip avec extraction automatique
+- Ajouter la génération automatique d'attestations manquantes
+
+s modals */
+.modal-content {
+    border-radius: 10px;
+}
+
+.modal-header {
+    background: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 10px 10px 0 0;
+}
+
+/* Style des badges */
+.badge {
+    font-size: 0.85em;
+    padding: 0.5em 0.75em;
+}
+
+/* Hover sur les lignes */
+.table-hover tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Responsive table */
+@media (max-width: 768px) {
+    .table-responsive {
+        border: 0;
+    }
+    
+    .table-responsive thead {
+        display: none;
+    }
+    
+    .table-responsive tr {
+        display: block;
+        margin-bottom: 1rem;
+        border: 1px solid #dee2e6;
+        border-radius: 0.25rem;
+    }
+    
+    .table-responsive td {
+        display: block;
+        text-align: right;
+        position: relative;
+        padding-left: 50%;
+    }
+    
+    .table-responsive td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 50%;
+        padding-left: 1rem;
+        text-align: left;
+        font-weight: bold;
+    }
+}
+
+
+### Fonctionnalités clés :
+
+1. *Tableau interactif* :
+   - Liste complète de toutes les participations
+   - Informations regroupées (utilisateur + formation)
+   - Statut visuel du paiement
+   - Prévisualisation des fichiers existants
+
+2. *Upload modal* :
+   - Popup d'upload contextuel pour chaque ligne
+   - Validation en temps réel des fichiers
+   - Feedback visuel immédiat
+
+3. *Gestion des fichiers* :
+   - Téléchargement direct depuis le tableau
+   - Remplacement des fichiers existants
+   - Suppression implicite en uploadant un nouveau fichier
+
+4. *Responsive design* :
+   - Adaptatif pour mobile
+   - Affichage optimisé sur petits écrans
+   - Navigation aisée
+
+### Pour améliorer le système :
+
+1. *Recherche/filtrage* :
+   html
+   <div class="mb-4">
+       <input type="text" class="form-control" 
+              placeholder="Rechercher par utilisateur ou formation..." 
+              id="searchInput">
+   </div>
+   
+   <script>
+   document.getElementById('searchInput').addEventListener('input', function(e) {
+       const value = e.target.value.toLowerCase();
+       document.querySelectorAll('tbody tr').forEach(row => {
+           const text = row.textContent.toLowerCase();
+           row.style.display = text.includes(value) ? '' : 'none';
+       });
+   });
+   </script>
+   
+
+2. *Bulk upload* :
+   python
+   # Dans views.py
+   @login_required
+   def bulk_upload(request):
+       if request.method == 'POST':
+           # Gestion multiple des fichiers
+           pass
+   
+
+3. *Historique des versions* :
+   python
+   class Participation(models.Model):
+       attestation = models.FileField(upload_to='attestations/%Y/%m/%d/')
+       previous_versions = models.JSONField(default=list)
+   
+
+4. *Notifications automatiques* :
+   ```python
+   # Dans la vue upload_attestation
+   from django.core.mail import send_mail
+   
+   if participation.attestation:
+       send_mail(
+           'Votre attest
